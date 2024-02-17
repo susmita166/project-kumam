@@ -1,0 +1,16 @@
+node_modules
+.DS_Store
+*.txt
+jspm_packages
+bower_components
+.npm
+.eslintcache
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+.env
+dist/
+build/
