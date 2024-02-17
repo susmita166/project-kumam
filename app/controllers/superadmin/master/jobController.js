@@ -15,7 +15,6 @@ const editJob = async(req, res) =>{
     const jobData = req.body;
     jobModel.editJob(jobData, req.user_detail)
     .then(editData => {
-        console.log("hello");
         res.status(200).json({ Status:'true', Data: editData ,Message: 'Job edit successfully'});
     })
     .catch(error => {
@@ -30,7 +29,6 @@ const listJob = async(req, res) =>{
     if(Object.keys(jobData).length == 0){
         jobModel.listJob()
         .then(jobDetails =>{
-            console.log(jobDetails);
             res.status(200).json({ Status:'true', Data: jobDetails ,Message: 'Employee list'});
         })
         .catch(error =>{
