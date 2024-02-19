@@ -9,7 +9,7 @@ const superadminMiddleware = require('../../middlewares/superadmin');
 const expressValidatorMiddleware = require('../../middlewares/expressValidator');
 const {
 	addJob,
-    editJob,
+    editTheJob,
 	listJob,
 	deleteJob
 } = require('../../app/controllers/superadmin/master/jobController')
@@ -83,7 +83,7 @@ router.post('/edit', superadminMiddleware.isAuthenticated, upload.any(),
 			.isNumeric().withMessage('Status must be numeric')
 			.isIn(['1', '2']).withMessage('Invalid status')
 	],
-	expressValidatorMiddleware.catchErrors, editJob)
+	expressValidatorMiddleware.catchErrors, editTheJob)
 
 router.delete('/delete', superadminMiddleware.isAuthenticated, upload.none(),
 	[

@@ -27,29 +27,25 @@ async function createJob(jobData, userDetail) {
     }
 }
 
-function editJob(jobData, userDetail) {
-    return new Promise((resolve, reject) => {
-        getJobDataBasedOnId(jobData.jobId)
-            .then(jobDetails => {
-                jobDetails.firstName = jobData.firstName;
-                jobDetails.lastName = jobData.lastName;
-                jobDetails.Phone_number = jobData.Phone_number;
-                jobDetails.email = jobData.email;
-                jobDetails.Location = jobData.Location;
-                jobDetails.gender = jobData.gender;
-                jobDetails.status = jobData.status;
-                jobDetails.createdBy = userDetail.id;
-                return updateDataBasedOnId(jobDetails);
-            })
-            .then(savedJob => {
-                console.log(savedJob);
-                resolve(savedJob); // Resolve with the saved job details
-            })
-            .catch(error => {
-                reject(error); // Reject with the error
-            });
-    });
+const editJob = async (jobData, userDetail) => {
+    try {
+        const jobDetails = await getJobDataBasedOnId(jobData.jobId);
+        jobDetails.firstName = jobData.firstName;
+        jobDetails.lastName = jobData.lastName;
+        jobDetails.Phone_number = jobData.Phone_number;
+        jobDetails.email = jobData.email;
+        jobDetails.Location = jobData.Location;
+        jobDetails.gender = jobData.gender;
+        jobDetails.status = jobData.status;
+        jobDetails.createdBy = userDetail.id;
+
+        const savedJob = await updateDataBasedOnId(jobDetails);
+        return savedJob; // Resolve with the saved job details
+    } catch (error) {
+        throw error; // Throw the error
+    }
 }
+
 
 function getJobDataBasedOnId(JobId) {
     return new Promise((resolve, reject) => {

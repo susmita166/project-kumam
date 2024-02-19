@@ -11,61 +11,52 @@ const addJob = async (req, res) => {
     });
 }
 
-const editJob = async(req, res) =>{
-    const jobData = req.body;
-    jobModel.editJob(jobData, req.user_detail)
-    .then(editData => {
-        res.status(200).json({ Status:'true', Data: editData ,Message: 'Job edit successfully'});
-    })
-    .catch(error => {
+const editTheJob = async (req, res) => {
+    try {
+        const jobData = req.body;
+        const editData = await jobModel.editJob(jobData, req.user_detail);
+        res.status(200).json({ Status: 'true', Data: editData, Message: 'Job edit successfully' });
+    } catch (error) {
         const statusCode = error.status || 500;
         // console.log(error);
-        res.status(error.status).json({ Status:'false', Data: {} ,Message: error.message });
-    })
-}
-
-const listJob = async(req, res) =>{
-    const jobData = req.body;
-    if(Object.keys(jobData).length == 0){
-        jobModel.listJob()
-        .then(jobDetails =>{
-            res.status(200).json({ Status:'true', Data: jobDetails ,Message: 'Employee list'});
-        })
-        .catch(error =>{
-            console.log(error);
-            res.status(error.status).json({ Status:'false', Data: {} ,Message: error.message });
-        })
-    }else{
-        jobModel.getJobDataBasedOnId(jobData.jobId)
-        .then(jobDetails =>{
-            res.status(200).json({ Status:'true', Data: jobDetails ,Message: 'Job Details'});
-        })
-        .catch(error =>{
-            console.log(error);
-            res.status(error.status).json({ Status:'false', Data: {} ,Message: error.message });
-        })
+        res.status(statusCode).json({ Status: 'false', Data: {}, Message: error.message });
     }
 }
 
-const deleteJob = async (req, res) => {
-    const jobData = req.body;
-    jobModel.getJobDataBasedOnId(jobData.jobId)
-    .then(jobDetails => {
-        return jobModel.deleteJobbasedonId(jobDetails.jobId);
-       // res.status(200).json({ Status:'true', Data: newJob, Message: 'Job created successfully' });
-    })
-    .then(deleteData =>{
-        res.status(deleteData.status).json({ Status:'true', Message: deleteData.message });
-    })
-    .catch(error => {
-        res.status(error.status).json({ Status:'false',Message: error.message });
-    });
+
+const listJob = async (req, res) => {
+    try {
+        const jobData = req.body;
+        if (Object.keys(jobData).length === 0) {
+            const jobDetails = await jobModel.listJob();
+            res.status(200).json({ Status: 'true', Data: jobDetails, Message: 'Employee list' });
+        } else {
+            const jobDetails = await jobModel.getJobDataBasedOnId(jobData.jobId);
+            res.status(200).json({ Status: 'true', Data: jobDetails, Message: 'Job Details' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(error.status || 500).json({ Status: 'false', Data: {}, Message: error.message || 'Internal Server Error' });
+    }
 }
+
+
+const deleteJob = async (req, res) => {
+    try {
+        const jobData = req.body;
+        const jobDetails = await jobModel.getJobDataBasedOnId(jobData.jobId);
+        const deleteData = await jobModel.deleteJobbasedonId(jobDetails.jobId);
+        res.status(deleteData.status).json({ Status: 'true', Message: deleteData.message });
+    } catch (error) {
+        res.status(error.status).json({ Status: 'false', Message: error.message });
+    }
+}
+
 
 
 module.exports = {
 	addJob,
-    editJob,
+    editTheJob,
     listJob,
     deleteJob
 };
