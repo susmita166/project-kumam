@@ -5,7 +5,8 @@ const {
 } = require('express-validator')
 
 const multer  = require('multer')
-const upload = multer({ dest: 'public/uploads/jobs_docs' })
+// const upload = multer({ dest: 'public/uploads/jobs_docs' })
+const getFileUploadMiddlewear = require("../../middlewares/fileUpload");
 
 const superadminMiddleware = require('../../middlewares/superadmin');
 const expressValidatorMiddleware = require('../../middlewares/expressValidator');
@@ -17,7 +18,7 @@ const {
 } = require('../../app/controllers/superadmin/master/jobController')
 
 
-router.get('/list', superadminMiddleware.isAuthenticated, upload.none(),
+router.get('/list', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.none(),
 	[
 		check('jobId')
 			.trim()
@@ -25,10 +26,10 @@ router.get('/list', superadminMiddleware.isAuthenticated, upload.none(),
 	], expressValidatorMiddleware.catchErrors, listJob)
 
 router.post('/add', 
-	upload.fields([
+getFileUploadMiddlewear.fields([
 		{ name: 'BankDetails', maxCount: 10 },
 		{ name: 'EducationCertificate', maxCount: 8 }
-	])
+])
 , superadminMiddleware.isAuthenticated,
 	[
 		check('firstName')
@@ -61,7 +62,10 @@ router.post('/add',
 	],
 	expressValidatorMiddleware.catchErrors, addJob)
 
-router.post('/edit', superadminMiddleware.isAuthenticated, upload.any(),
+router.post('/edit', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.fields([
+	{ name: 'BankDetails', maxCount: 10 },
+	{ name: 'EducationCertificate', maxCount: 8 }
+]),
 	[
 		check('firstName')
 			.trim()
@@ -93,7 +97,7 @@ router.post('/edit', superadminMiddleware.isAuthenticated, upload.any(),
 	],
 	expressValidatorMiddleware.catchErrors, editTheJob)
 
-router.delete('/delete', superadminMiddleware.isAuthenticated, upload.none(),
+router.delete('/delete', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.none(),
 	[
 		check('jobId')
 			.trim()
