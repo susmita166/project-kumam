@@ -3,8 +3,10 @@ const router = express.Router()
 const {
 	check
 } = require('express-validator')
-const multer = require("multer");
-const upload = multer();
+
+const multer  = require('multer')
+const upload = multer({ dest: 'public/uploads/jobs_docs' })
+
 const superadminMiddleware = require('../../middlewares/superadmin');
 const expressValidatorMiddleware = require('../../middlewares/expressValidator');
 const {
@@ -14,6 +16,7 @@ const {
 	deleteJob
 } = require('../../app/controllers/superadmin/master/jobController')
 
+
 router.get('/list', superadminMiddleware.isAuthenticated, upload.none(),
 	[
 		check('jobId')
@@ -21,7 +24,12 @@ router.get('/list', superadminMiddleware.isAuthenticated, upload.none(),
 			.optional()
 	], expressValidatorMiddleware.catchErrors, listJob)
 
-router.post('/add', upload.none(), superadminMiddleware.isAuthenticated,
+router.post('/add', 
+	upload.fields([
+		{ name: 'BankDetails', maxCount: 10 },
+		{ name: 'EducationCertificate', maxCount: 8 }
+	])
+, superadminMiddleware.isAuthenticated,
 	[
 		check('firstName')
 			.trim()

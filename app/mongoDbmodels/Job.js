@@ -1,11 +1,22 @@
 const { default: mongoose } = require('mongoose');
-const mongoDbConnection = require("../../util/mongodb");
+const mongoDbConnection = require("../../util/mongoDbmodels/mongodb");
 const { error, createLogger } = require('winston');
 
-async function createJob(jobData, userDetail) {
+async function createJob(jobData, userDetail, fileData) {
     try {
         const foundJob = await Job.findOne({ $or: [{ email: jobData.email }, { jobId: jobData.jobId }] });
-        console.log(foundJob);
+        const getBankData = fileData.BankDetails;
+        const getEducationCertificateData = fileData.EducationCertificate;
+        if(getBankData){
+            getBankData.forEach((obj, index)=>{
+                obj.fileId = index +1;
+            });
+        }
+        if(getEducationCertificateData){
+            getEducationCertificateData.forEach((obj, index)=>{
+                obj.fileId = index +1;
+            });
+        }
         if (foundJob) {
             throw { message: 'A job with the same email or job ID already exists', status: 422 };
         }else{
@@ -18,7 +29,9 @@ async function createJob(jobData, userDetail) {
                 Location: jobData.Location, 
                 gender: jobData.gender,
                 status: jobData.status,
-                createdBy:userDetail.id
+                createdBy:userDetail.id,
+                BankDetails: getBankData,
+                EducationCertificateDetails:getEducationCertificateData
             });
             return newJob;
         }
@@ -96,7 +109,6 @@ function deleteJobbasedonId(jobId){
     return new Promise((resolve, reject) =>{
     Job.deleteOne({jobId:jobId})
     .then(deletedJob =>{
-        console.log(deletedJob);
         resolve({ 
             message: `Job data deleted successfully for this id: ${jobId}`,
             status: 200 });
@@ -127,8 +139,6 @@ function deleteJobbasedonId(jobId){
 //         updatedJob, 
 //         { new: true, runValidators: true } 
 //     );
-
-
 
 
 const jobSchema = new mongoDbConnection.Schema({
@@ -166,7 +176,9 @@ const jobSchema = new mongoDbConnection.Schema({
     },
     createdBy: {
         type : Number,
-    }
+    },
+    BankDetails: [{ type: Object }],
+    EducationCertificateDetails: [{ type: Object }]
 },{timestamps:true});
 
 const Job = mongoose.model("Job", jobSchema);

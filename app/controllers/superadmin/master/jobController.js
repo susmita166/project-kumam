@@ -1,8 +1,10 @@
 const jobModel = require("../../../mongoDbmodels/job");
 
+
 const addJob = async (req, res) => {
     const jobData = req.body;
-    jobModel.createJob(jobData, req.user_detail)
+    const fileData = req.files;
+    jobModel.createJob(jobData, req.user_detail, fileData)
     .then(newJob => {
         res.status(200).json({ Status:'true', Data: newJob, Message: 'Job created successfully' });
     })
@@ -35,7 +37,6 @@ const listJob = async (req, res) => {
             res.status(200).json({ Status: 'true', Data: jobDetails, Message: 'Job Details' });
         }
     } catch (error) {
-        console.error(error);
         res.status(error.status || 500).json({ Status: 'false', Data: {}, Message: error.message || 'Internal Server Error' });
     }
 }
