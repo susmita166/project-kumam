@@ -9,12 +9,12 @@ async function createJob(jobData, userDetail, fileData) {
         const getEducationCertificateData = fileData.EducationCertificate;
         if(getBankData){
             getBankData.forEach((obj, index)=>{
-                obj.fileId = index +1;
+                obj.bankFileId = index +1;
             });
         }
         if(getEducationCertificateData){
             getEducationCertificateData.forEach((obj, index)=>{
-                obj.fileId = index +1;
+                obj.EducationCertificateId = index +1;
             });
         }
         if (foundJob) {

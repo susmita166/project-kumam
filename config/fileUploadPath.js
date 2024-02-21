@@ -1,10 +1,8 @@
 module.exports = {
     module: {
-        BankDetails: {
+        jobDocs: {
             dir_name: 'job_docs',
-            dir_path: 'public/uploads/jobs_docs'
-        }
-
+            dir_path: 'cdn/uploads/jobs_docs'
+        },
     }
-
 };

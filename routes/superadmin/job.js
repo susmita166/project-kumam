@@ -29,8 +29,8 @@ router.post('/add',
 getFileUploadMiddlewear.fields([
 		{ name: 'BankDetails', maxCount: 10 },
 		{ name: 'EducationCertificate', maxCount: 8 }
-])
-, superadminMiddleware.isAuthenticated,
+]), 
+superadminMiddleware.isAuthenticated,
 	[
 		check('firstName')
 			.trim()
@@ -65,7 +65,7 @@ getFileUploadMiddlewear.fields([
 router.post('/edit', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.fields([
 	{ name: 'BankDetails', maxCount: 10 },
 	{ name: 'EducationCertificate', maxCount: 8 }
-]),
+	]),
 	[
 		check('firstName')
 			.trim()
