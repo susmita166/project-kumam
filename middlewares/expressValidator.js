@@ -2,21 +2,13 @@ const { validationResult } = require('express-validator');
 const fs = require('fs');
 const logger = require('../util/logger');
 
-const removeUploadedFiles = (uploadedFiles) => {
-    if (uploadedFiles) {
-        for (const fieldName in uploadedFiles) {
-            if (uploadedFiles.hasOwnProperty(fieldName)) {
-                const field = uploadedFiles[fieldName];
-                field.forEach(item => {
-                    const filePath = `${__dirname}/../${item.destination}/${item.filename}`;
-                    fs.unlink(filePath, (err) => {
-                        if (err) {
-                            logger.error(`Error deleting file: ${filePath} - ${err.message}`);
-                        }
-                    });
-                });
-            }
-        }
+const removeUploadedFiles = async(FilesDetails) =>{
+    try{
+        Object.keys(FilesDetails).forEach((key)=>{
+            fs.unlinkSync(FilesDetails[key].path);
+        });
+    }catch(err){
+        logger.error(err.toString());
     }
 }
 

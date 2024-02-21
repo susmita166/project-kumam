@@ -1,5 +1,6 @@
 const jobModel = require("../../../mongoDbmodels/job");
 const getfileuploadPath = require("../../../../config/fileUploadPath");
+const getExpressValidator = require("../../../../middlewares/expressValidator");
 
 const addJob = async (req, res) => {
     const jobData = req.body;
@@ -9,6 +10,8 @@ const addJob = async (req, res) => {
         res.status(200).json({ Status:'true', Data: newJob, Message: 'Job created successfully' });
     })
     .catch(error => {
+        getExpressValidator.removeUploadedFiles(fileData.BankDetails);
+        getExpressValidator.removeUploadedFiles(fileData.EducationCertificate);
         res.status(error.status).json({ error: error.message });
     });
 }
@@ -20,7 +23,6 @@ const editTheJob = async (req, res) => {
         res.status(200).json({ Status: 'true', Data: editData, Message: 'Job edit successfully' });
     } catch (error) {
         const statusCode = error.status || 500;
-        // console.log(error);
         res.status(statusCode).json({ Status: 'false', Data: {}, Message: error.message });
     }
 }
