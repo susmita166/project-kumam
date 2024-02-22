@@ -1,4 +1,4 @@
-const jobModel = require("../../../mongoDbmodels/job");
+const jobModel = require("../../../mongoDbmodels/Job");
 const getfileuploadPath = require("../../../../config/fileUploadPath");
 const getExpressValidator = require("../../../../middlewares/expressValidator");
 
