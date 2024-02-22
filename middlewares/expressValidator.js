@@ -18,9 +18,15 @@ const catchErrors = (req, res, next) => {
         const allErrors = errors.array();
         const defaultErrorMessage = allErrors[0].msg;
         const formattedErrorMessages = allErrors.map(error => ({ message: error.msg, param: error.param }));
-        if (req.files) {
-            removeUploadedFiles(req.files);
-        }
+        filesData = req.files;
+        Object.keys(filesData).forEach((obj)=>{
+            if(obj){
+                removeUploadedFiles(filesData[obj]);
+            }
+        });
+        // if (req.files) {
+        //     removeUploadedFiles(req.files);
+        // }
         const statusCode = 422;
         return res.status(statusCode).json({
             message: defaultErrorMessage,

@@ -19,7 +19,8 @@ const addJob = async (req, res) => {
 const editTheJob = async (req, res) => {
     try {
         const jobData = req.body;
-        const editData = await jobModel.editJob(jobData, req.user_detail);
+        const fileData = req.files;
+        const editData = await jobModel.editJob(jobData, req.user_detail, fileData);
         res.status(200).json({ Status: 'true', Data: editData, Message: 'Job edit successfully' });
     } catch (error) {
         const statusCode = error.status || 500;
@@ -93,19 +94,20 @@ const listJob = async (req, res) => {
     }
 }
 
-
 const deleteJob = async (req, res) => {
     try {
         const jobData = req.body;
         const jobDetails = await jobModel.getJobDataBasedOnId(jobData.jobId);
-        const deleteData = await jobModel.deleteJobbasedonId(jobDetails.jobId);
+        const deleteData = await jobModel.deleteJobbasedonId(jobData.jobId);
+        if(deleteData.status == 200){
+            getExpressValidator.removeUploadedFiles(jobDetails.BankDetails);
+            getExpressValidator.removeUploadedFiles(jobDetails.EducationCertificateDetails);
+        }
         res.status(deleteData.status).json({ Status: 'true', Message: deleteData.message });
     } catch (error) {
         res.status(error.status).json({ Status: 'false', Message: error.message });
     }
 }
-
-
 
 module.exports = {
 	addJob,

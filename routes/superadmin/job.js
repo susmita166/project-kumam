@@ -62,10 +62,12 @@ superadminMiddleware.isAuthenticated,
 	],
 	expressValidatorMiddleware.catchErrors, addJob)
 
-router.post('/edit', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.fields([
+router.post('/edit',  
+	getFileUploadMiddlewear.fields([
 	{ name: 'BankDetails', maxCount: 10 },
 	{ name: 'EducationCertificate', maxCount: 8 }
 	]),
+	superadminMiddleware.isAuthenticated,
 	[
 		check('firstName')
 			.trim()
@@ -95,7 +97,8 @@ router.post('/edit', superadminMiddleware.isAuthenticated, getFileUploadMiddlewe
 			.isNumeric().withMessage('Status must be numeric')
 			.isIn(['1', '2']).withMessage('Invalid status')
 	],
-	expressValidatorMiddleware.catchErrors, editTheJob)
+	expressValidatorMiddleware.catchErrors, 
+	editTheJob)
 
 router.delete('/delete', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.none(),
 	[

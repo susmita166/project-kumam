@@ -1,6 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const mongoDbConnection = require("../../util/mongoDbmodels/mongodb");
-const { error, createLogger } = require('winston');
+const logger = require('../../util/logger');
+const getExpressValidator = require("../../middlewares/expressValidator");
 
 async function createJob(jobData, userDetail, fileData) {
     try {
@@ -36,12 +37,28 @@ async function createJob(jobData, userDetail, fileData) {
             return newJob;
         }
     } catch (error) {
+        logger.error(err);
         throw error;
     }
 }
+       
 
-const editJob = async (jobData, userDetail) => {
+const editJob = async (jobData, userDetail, fileData) => {
     try {
+        const jobBankDetails = fileData.BankDetails;
+        const jobEducationDetails = fileData.EducationCertificate;
+        if(jobBankDetails){
+            jobBankDetails.forEach((obj, index)=>{
+                index = index + 1;
+                obj.bankFileId = index;
+            });
+        }
+        if(jobEducationDetails){
+            jobEducationDetails.forEach((obj, index)=>{
+                index = index + 1;
+                obj.EducationCertificateId = index;
+            });
+        }
         const jobDetails = await getJobDataBasedOnId(jobData.jobId);
         jobDetails.firstName = jobData.firstName;
         jobDetails.lastName = jobData.lastName;
@@ -51,14 +68,19 @@ const editJob = async (jobData, userDetail) => {
         jobDetails.gender = jobData.gender;
         jobDetails.status = jobData.status;
         jobDetails.createdBy = userDetail.id;
-
+        jobDetails.BankDetails = jobBankDetails;
+        jobDetails.EducationCertificateDetails = jobEducationDetails;
         const savedJob = await updateDataBasedOnId(jobDetails);
-        return savedJob; // Resolve with the saved job details
+        if(savedJob){
+            getExpressValidator.removeUploadedFiles(jobDetails.BankDetails);
+            getExpressValidator.removeUploadedFiles(jobDetails.EducationCertificateDetails);
+        }
+        return savedJob; 
     } catch (error) {
+        logger.error(err);
         throw error; // Throw the error
     }
 }
-
 
 function getJobDataBasedOnId(JobId) {
     return new Promise((resolve, reject) => {
@@ -73,6 +95,7 @@ function getJobDataBasedOnId(JobId) {
                 }
             })
             .catch(error => {
+                logger.error(error);
                 const customError = new Error('Error retrieving job data for JobId: ' + JobId);
                 customError.status = 500; 
                 reject(customError);
@@ -87,6 +110,7 @@ function updateDataBasedOnId(jobDetails) {
                 resolve(savedJob); // Resolve with the saved job details
             })
             .catch(error => {
+                logger.error(error);
                 reject(error); // Reject with the error
             });
     });
@@ -99,11 +123,11 @@ function listJob(){
             resolve(jobDetails);
         })
         .catch(error => {
+            logger.error(error);
             reject({ statusCode: 500, message: 'No data found' });
         });
     });
 }
-
 
 function deleteJobbasedonId(jobId){
     return new Promise((resolve, reject) =>{
@@ -114,6 +138,7 @@ function deleteJobbasedonId(jobId){
             status: 200 });
         })
     .catch(error =>{
+        logger.error(error);
         reject({ 
             message: `unable to delete job details for this id: ${jobId}`,
             status: 500 });
