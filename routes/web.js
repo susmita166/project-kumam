@@ -30,6 +30,8 @@ const vendorRoutes = require('./shared/vendor')
 const authRoutes = require('./shared/auth')
 const superadminJOBRoutes = require('./superadmin/job')
 
+const tirthaYatraRoutes = require('./shared/tirthaYatra')
+
 const routes = [
     {
         entryPoint: '/api/superadmin/auth',
@@ -158,7 +160,11 @@ const routes = [
     {
         entryPoint: '/api/superadmin/job',
         routes: superadminJOBRoutes
-    }
+    },
+    {
+        entryPoint: '/api/superadmin/tirthaYatra',
+        routes: tirthaYatraRoutes
+    },
 ];
 
 module.exports = routes;
