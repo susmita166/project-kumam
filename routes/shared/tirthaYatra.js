@@ -45,12 +45,14 @@ router.post('/edit',
 	expressValidatorMiddleware.catchErrors, editDetails)
 
 
-router.get('/list', superadminMiddleware.isAuthenticated, getFileUploadMiddlewear.none(),
+router.get('/list', 
+    superadminMiddleware.isAuthenticated,
+    getFileUploadMiddlewear.none(),
 	[
-		check('jobId')
-			.trim()
-			.optional()
-	], expressValidatorMiddleware.catchErrors, listDetails)    
+        check('ApplicationId')
+        .trim()
+    ], 
+    expressValidatorMiddleware.catchErrors, listDetails)    
 
 
 

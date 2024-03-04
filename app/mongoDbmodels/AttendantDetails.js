@@ -44,6 +44,18 @@ function getAttendantDt(ApplicationId){
     })
 }
 
+function getDataBasedOnApplicationIds(ApplicationIds){
+    return new Promise((resolve, reject)=>{
+        AttendantDetails.find().where('ApplicationId').in(ApplicationIds)
+        .then(getData =>{
+            resolve (getData);
+        })
+        .catch(error =>{
+            reject (error);
+        })
+    })
+}
+
 const AttendantDetailsSchema = new mongoDbConnection.Schema({
     id:{
         type : Number,
@@ -93,5 +105,6 @@ module.exports = {
     getLastRecord,
     insertAttendantDetails,
     getAttendantDt,
-    updateData
+    updateData,
+    getDataBasedOnApplicationIds
 };

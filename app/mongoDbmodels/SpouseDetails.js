@@ -46,6 +46,21 @@ function updateData(ApplicationId, sposeData){
     })
 }
 
+
+function getDataBasedOnApplicationIds(ApplicationIds){
+    return new Promise((resolve, reject)=>{
+        SpouseDetails.find().where('ApplicationId').in(ApplicationIds)
+        .then(getData =>{
+            resolve (getData);
+        })
+        .catch(error =>{
+            reject (error);
+        })
+    })
+}
+
+
+
 const SposeDetailsSchema = new mongoDbConnection.Schema({
     id:{
         type : Number,
@@ -95,5 +110,6 @@ module.exports = {
     getLastRecord,
     insertSpouseDEtails,
     getSpouseDt,
-    updateData
+    updateData,
+    getDataBasedOnApplicationIds
 };

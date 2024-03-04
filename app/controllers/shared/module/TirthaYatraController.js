@@ -149,7 +149,46 @@ const editDetails = async (req, res) => {
 }
 
 const listDetails = async(req, res) =>{
-    console.log("hello");
+    try{
+        let requestData = req.body;
+        let objectLength = Object.keys(requestData.ApplicationId).length;
+        if(requestData.ApplicationId == ""){
+            let personalDetails = await PersonalDetailsModel.getAllPersnlDt(requestData.limit , requestData.page-1);
+            const getPersnlDtsIds = personalDetails.map(item => item.id);
+            let [spouseDetails, attendantDetails] = await Promise.all([
+                SpouseDetailsModel.getDataBasedOnApplicationIds(getPersnlDtsIds),
+                AttendantDetailsModel.getDataBasedOnApplicationIds(getPersnlDtsIds)
+            ]);
+
+            personalDetails.forEach((item, index) =>{
+                const spouseDt = spouseDetails.find(spouseDetails => spouseDetails.ApplicationId == item.id);
+                personalDetails[index]._doc.spouseDetail = spouseDt || null;
+                const attendantDt = attendantDetails.find(attendantDetails => item.id = attendantDetails.ApplicationId);
+                personalDetails[index]._doc.attendanntDetails = attendantDt||null;
+            })
+            res.status(200).json({
+                status:true,
+                count: personalDetails.length,
+                data: personalDetails
+            });
+        }
+        else{
+            const [personalDetails, spouseDetails, attendantDetails] = await Promise.all([
+                PersonalDetailsModel.getPrsnlDt(requestData.ApplicationId),
+                SpouseDetailsModel.getSpouseDt(requestData.ApplicationId),
+                AttendantDetailsModel.getAttendantDt(requestData.ApplicationId)
+            ]);
+            let mergedData = Object.assign( {}, personalDetails._doc, spouseDetails, attendantDetails[0]._doc);
+            res.status(200).json({ 
+                Status:'true', 
+                Data: mergedData, 
+                Message: 'User Details' 
+            });
+        }
+    }
+    catch(error){
+        res.status(error.status || 500).json({ Status: 'false', Data: {}, Message: error.message || 'Internal Server Error' });
+    }
 }
 
 module.exports={

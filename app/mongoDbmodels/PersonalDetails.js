@@ -23,6 +23,18 @@ function getPrsnlDt(ApplicationId){
     })
 }
 
+function getAllPersnlDt(limit, skip){
+    return new Promise((resolve,reject) =>{
+        PersonalDetails.find().skip(skip).limit(limit)
+        .then(getData =>{
+            resolve (getData);
+        })
+        .catch(error=>{
+            reject (error);
+        })
+    })
+}
+
 function updateData(ApplicationId, PersonalDetailsData){
     return new Promise((resolve, reject)=>{
         PersonalDetails.findOneAndUpdate({id:ApplicationId}, PersonalDetailsData, { new: true, runValidators: true })
@@ -122,5 +134,6 @@ module.exports = {
     getLastRecord,
     insertPersonalDetails,
     getPrsnlDt,
-    updateData
+    updateData,
+    getAllPersnlDt
 };
