@@ -153,7 +153,9 @@ const listDetails = async(req, res) =>{
         let requestData = req.body;
         let objectLength = Object.keys(requestData.ApplicationId).length;
         if(requestData.ApplicationId == ""){
-            let personalDetails = await PersonalDetailsModel.getAllPersnlDt(requestData.limit , requestData.page-1);
+            let limit = requestData.limit;
+            let skip = (requestData.page-1)*requestData.limit;
+            let personalDetails = await PersonalDetailsModel.getAllPersnlDt(limit , skip);
             const getPersnlDtsIds = personalDetails.map(item => item.id);
             let [spouseDetails, attendantDetails] = await Promise.all([
                 SpouseDetailsModel.getDataBasedOnApplicationIds(getPersnlDtsIds),
@@ -161,9 +163,9 @@ const listDetails = async(req, res) =>{
             ]);
 
             personalDetails.forEach((item, index) =>{
-                const spouseDt = spouseDetails.find(spouseDetails => spouseDetails.ApplicationId == item.id);
+                const spouseDt = spouseDetails.find(spouseDetails => item.id == spouseDetails.ApplicationId);
                 personalDetails[index]._doc.spouseDetail = spouseDt || null;
-                const attendantDt = attendantDetails.find(attendantDetails => item.id = attendantDetails.ApplicationId);
+                const attendantDt = attendantDetails.find(attendantDetails => item.id == attendantDetails.ApplicationId);
                 personalDetails[index]._doc.attendanntDetails = attendantDt||null;
             })
             res.status(200).json({
@@ -178,7 +180,10 @@ const listDetails = async(req, res) =>{
                 SpouseDetailsModel.getSpouseDt(requestData.ApplicationId),
                 AttendantDetailsModel.getAttendantDt(requestData.ApplicationId)
             ]);
-            let mergedData = Object.assign( {}, personalDetails._doc, spouseDetails, attendantDetails[0]._doc);
+            // Here by using this assign operator we merge the object
+            // let mergedData = Object.assign( {}, personalDetails._doc, spouseDetails, attendantDetails[0]._doc);
+
+            let mergedData ={...personalDetails._doc, spouseDetail:spouseDetails, attendantDetails:attendantDetails};
             res.status(200).json({ 
                 Status:'true', 
                 Data: mergedData, 
