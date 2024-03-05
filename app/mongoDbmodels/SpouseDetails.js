@@ -46,6 +46,18 @@ function updateData(ApplicationId, sposeData){
     })
 }
 
+function deleteSpouseDt(ApplicationId){
+    return new Promise((resolve, reject)=>{
+        SpouseDetails.deleteOne({ApplicationId: ApplicationId})
+        .then(dltData=>{
+            resolve (dltData);
+        })
+        .catch(error =>{
+            reject (error);
+        })
+    })
+}
+
 
 function getDataBasedOnApplicationIds(ApplicationIds){
     return new Promise((resolve, reject)=>{
@@ -111,5 +123,6 @@ module.exports = {
     insertSpouseDEtails,
     getSpouseDt,
     updateData,
-    getDataBasedOnApplicationIds
+    getDataBasedOnApplicationIds,
+    deleteSpouseDt
 };

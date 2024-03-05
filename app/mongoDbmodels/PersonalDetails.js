@@ -47,6 +47,19 @@ function updateData(ApplicationId, PersonalDetailsData){
     })
 }
 
+
+function deletePersnlDt(ApplicationId){
+    return new Promise((resolve, reject)=>{
+        PersonalDetails.deleteOne({id:ApplicationId})
+        .then(deleteData =>{
+            resolve (deleteData);
+        })
+        .catch(error =>{
+            reject (error);
+        })
+    })
+}
+
 function insertPersonalDetails(PersonalDetailsData){
     return new Promise((resolve, reject)=>{
         PersonalDetails.create(PersonalDetailsData)
@@ -135,5 +148,6 @@ module.exports = {
     insertPersonalDetails,
     getPrsnlDt,
     updateData,
-    getAllPersnlDt
+    getAllPersnlDt,
+    deletePersnlDt
 };

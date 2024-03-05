@@ -19,11 +19,13 @@ const catchErrors = (req, res, next) => {
         const defaultErrorMessage = allErrors[0].msg;
         const formattedErrorMessages = allErrors.map(error => ({ message: error.msg, param: error.param }));
         filesData = req.files;
-        Object.keys(filesData).forEach((obj)=>{
-            if(obj){
-                removeUploadedFiles(filesData[obj]);
-            }
-        });
+        if(filesData){
+            Object.keys(filesData).forEach((obj)=>{
+                if(obj){
+                    removeUploadedFiles(filesData[obj]);
+                }
+            });
+        }
         // if (req.files) {
         //     removeUploadedFiles(req.files);
         // }

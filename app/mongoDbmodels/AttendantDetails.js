@@ -56,6 +56,19 @@ function getDataBasedOnApplicationIds(ApplicationIds){
     })
 }
 
+function deleteAttendant(ApplicationId){
+    return new Promise((resolve, reject)=>{
+        AttendantDetails.deleteOne({ApplicationId:ApplicationId})
+        .then(dltData=>{
+            resolve (dltData);
+        })
+        .then(error=>{
+            reject (error);
+        })
+    })
+}
+
+
 const AttendantDetailsSchema = new mongoDbConnection.Schema({
     id:{
         type : Number,
@@ -106,5 +119,6 @@ module.exports = {
     insertAttendantDetails,
     getAttendantDt,
     updateData,
-    getDataBasedOnApplicationIds
+    getDataBasedOnApplicationIds,
+    deleteAttendant
 };

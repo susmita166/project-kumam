@@ -84,9 +84,9 @@ const editDetails = async (req, res) => {
         let userDetails = req.user_detail;
     
         const [getPersonalDetails, getSpouseDetails, getAttendantDetails] = await Promise.all([
-            await PersonalDetailsModel.getPrsnlDt(requestData.ApplicationId),
-            await SpouseDetailsModel.getSpouseDt(requestData.ApplicationId),
-            await AttendantDetailsModel.getAttendantDt(requestData.ApplicationId)
+             PersonalDetailsModel.getPrsnlDt(requestData.ApplicationId),
+             SpouseDetailsModel.getSpouseDt(requestData.ApplicationId),
+             AttendantDetailsModel.getAttendantDt(requestData.ApplicationId)
         ])
     
         let personalData = {
@@ -196,8 +196,34 @@ const listDetails = async(req, res) =>{
     }
 }
 
+const deleteDetails = async(req, res) => {
+    try{
+        let requestData = req.body;
+        if(requestData.ApplicationId){
+            let [dltPersnlDt, dltSpouseDt, dltAttendntDt] = await Promise.all([
+                PersonalDetailsModel.deletePersnlDt(requestData.ApplicationId),
+                SpouseDetailsModel.deleteSpouseDt(requestData.ApplicationId),
+                AttendantDetailsModel.deleteAttendant(requestData.ApplicationId),
+            ]);
+            res.status(200).json({
+                Status:'True',
+                Data:[],
+                Message:"Data Deleted Successfully"
+            })
+        }
+    }catch(error){
+        res.status(500).json({
+            Status:'False',
+            message: "Error",
+			error: error.toString()
+        })
+    }
+}
+
+
 module.exports={
     insertDetails,
     editDetails,
-    listDetails
+    listDetails,
+    deleteDetails
 }

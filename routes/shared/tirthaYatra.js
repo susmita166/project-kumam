@@ -9,7 +9,8 @@ const expressValidatorMiddleware = require('../../middlewares/expressValidator')
 const {
 	insertDetails,
     editDetails,
-    listDetails
+    listDetails,
+    deleteDetails
 } = require('../../app/controllers/shared/module/TirthaYatraController')
 
 
@@ -55,5 +56,14 @@ router.get('/list',
     expressValidatorMiddleware.catchErrors, listDetails)    
 
 
+router.post('/delete',
+    getFileUploadMiddlewear.none(),
+    superadminMiddleware.isAuthenticated, 
+    [
+        check('ApplicationId')
+            .trim()
+            .notEmpty().withMessage('ApplicationId ID is required')
+    ], 
+    expressValidatorMiddleware.catchErrors, deleteDetails)    
 
 module.exports = router
