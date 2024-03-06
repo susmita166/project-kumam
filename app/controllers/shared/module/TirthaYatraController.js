@@ -1,6 +1,7 @@
 const PersonalDetailsModel = require("../../../mongoDbmodels/PersonalDetails");
 const SpouseDetailsModel = require("../../../mongoDbmodels/SpouseDetails");
 const AttendantDetailsModel = require("../../../mongoDbmodels/AttendantDetails");
+const DistrictMasterModel = require("../../../mongoDbmodels/DistrictMaster");
 const getfileuploadPath = require("../../../../config/fileUploadPath");
 const getExpressValidator = require("../../../../middlewares/expressValidator");
 const moment = require('moment');
@@ -13,9 +14,9 @@ const insertDetails = async (req, res) => {
     let userDetails = req.user_detail;
 
     const [getLastRecordOfPersonalDetails, getLastRecordOfSpouseDetails, getLastRecordOfAttendantDetails] = await Promise.all([
-        await PersonalDetailsModel.getLastRecord(),
-        await SpouseDetailsModel.getLastRecord(),
-        await AttendantDetailsModel.getLastRecord()
+         PersonalDetailsModel.getLastRecord(),
+         SpouseDetailsModel.getLastRecord(),
+         AttendantDetailsModel.getLastRecord()
     ]);
     let personalData = {
         id:getLastRecordOfPersonalDetails[0].id+1,
@@ -196,6 +197,7 @@ const listDetails = async(req, res) =>{
     }
 }
 
+
 const deleteDetails = async(req, res) => {
     try{
         let requestData = req.body;
@@ -214,16 +216,58 @@ const deleteDetails = async(req, res) => {
     }catch(error){
         res.status(500).json({
             Status:'False',
-            message: "Error",
-			error: error.toString()
+            Message: "Error",
+			Error: error.toString()
         })
     }
 }
+
+const generateRegistrationNumber = async(req, res) =>{
+    try{
+        const requestData = req.body;
+        const getPersnlDts = await PersonalDetailsModel.getPrsnlDt(requestData.ApplicationId);
+        const getDistrictCode = await DistrictMasterModel.getDistrictCode(getPersnlDts.Domicile_DistId);
+        const getAppctnReg = await PersonalDetailsModel.getAllReg(getPersnlDts.Scheme_Id, getPersnlDts.Domicile_DistId);
+        let totalApplication = 0;
+        if(getAppctnReg.length==0){
+            totalApplication++;
+        }else{
+            console.log(typeof getAppctnReg[0].RegistrationNo);
+            totalApplication = parseInt(getAppctnReg[0].RegistrationNo)+1;
+        }
+        const padRegistration = totalApplication.toString().padStart(getAppctnReg[0].RegistrationNo.length, '0');
+        const padRequestNoPerson = requestData.no_of_person.padStart(2, '0');
+        const regNumber = getDistrictCode.Dist_Code+'-'+padRequestNoPerson+'-'+padRegistration;
+        let genRegNo = {
+            RegistrationNo:regNumber
+        }
+        await PersonalDetailsModel.updateData(requestData.ApplicationId, genRegNo);
+        const getPersnlDtsAfterModification = await PersonalDetailsModel.getPrsnlDt(requestData.ApplicationId);
+        res.status(200).json({ 
+            Status:'true', 
+            Data: getPersnlDtsAfterModification, 
+            Message: 'Registration Number Generate Sucessfully' 
+        });
+      
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({
+            Status:"False",
+            Message:"Error",
+            Error: error.toString()
+        })
+    }
+   
+}
+
+
 
 
 module.exports={
     insertDetails,
     editDetails,
     listDetails,
-    deleteDetails
+    deleteDetails,
+    generateRegistrationNumber
 }

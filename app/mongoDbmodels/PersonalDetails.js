@@ -11,6 +11,27 @@ async function getLastRecord(){
     return getLastRecord;
 }
 
+async function getAllReg(Scheme_Id,Dist_Id){
+    return PersonalDetails.aggregate([
+        {$match:{
+                Domicile_DistId: Dist_Id,
+                Scheme_Id: Scheme_Id,
+                IsDeleted: { $ne: 1 },
+                Application_Status: { $ne: 4 },
+                RegistrationNo: { $ne: null },
+        }},
+        {$project:{
+                id:1,
+                originalRegistrationNo: "$RegistrationNo",
+                // Domicile_DistId: "$Domicile_DistId",
+                // Application_Status: "$Application_Status",
+                RegistrationNo: {$substr: ["$RegistrationNo", 7, 13]}
+        }},
+        {$sort:{RegistrationNo:-1}},
+        {$limit:1}
+    ])
+}
+
 function getPrsnlDt(ApplicationId){
     return new Promise((resolve, reject)=>{
         PersonalDetails.findOne({id: ApplicationId})
@@ -22,6 +43,7 @@ function getPrsnlDt(ApplicationId){
         })
     })
 }
+
 
 function getAllPersnlDt(limit, skip){
     return new Promise((resolve,reject) =>{
@@ -88,8 +110,8 @@ const PersonalDetailsSchema = new mongoDbConnection.Schema({
         required :true
     },
     Domicile_DistId : {
-        type : String,
-        required :Number
+        type : Number,
+        required: true
     },
     RegistrationNo : {
         type : String,
@@ -149,5 +171,6 @@ module.exports = {
     getPrsnlDt,
     updateData,
     getAllPersnlDt,
-    deletePersnlDt
+    deletePersnlDt,
+    getAllReg
 };

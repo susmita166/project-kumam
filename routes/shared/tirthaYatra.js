@@ -10,7 +10,8 @@ const {
 	insertDetails,
     editDetails,
     listDetails,
-    deleteDetails
+    deleteDetails,
+    generateRegistrationNumber
 } = require('../../app/controllers/shared/module/TirthaYatraController')
 
 
@@ -65,5 +66,16 @@ router.post('/delete',
             .notEmpty().withMessage('ApplicationId ID is required')
     ], 
     expressValidatorMiddleware.catchErrors, deleteDetails)    
+
+
+    router.get('/GenerateRegNo', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        [
+            check('ApplicationId')
+            .trim()
+            .notEmpty().withMessage('ApplicationId ID is required')
+        ], 
+        expressValidatorMiddleware.catchErrors, generateRegistrationNumber)      
 
 module.exports = router
