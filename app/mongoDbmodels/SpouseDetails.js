@@ -1,5 +1,6 @@
 const { default: mongoose } = require('mongoose');
 const mongoDbConnection = require("../../util/mongoDbmodels/mongodb");
+const PersonalDetailsModel = require("../mongoDbmodels/PersonalDetails");
 const logger = require('../../util/logger');
 const getExpressValidator = require("../../middlewares/expressValidator");
 
@@ -70,8 +71,6 @@ function getDataBasedOnApplicationIds(ApplicationIds){
         })
     })
 }
-
-
 
 const SposeDetailsSchema = new mongoDbConnection.Schema({
     id:{

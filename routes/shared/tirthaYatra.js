@@ -14,6 +14,10 @@ const {
     generateRegistrationNumber
 } = require('../../app/controllers/shared/module/TirthaYatraController')
 
+const {
+	applicantVerificationDetails
+} = require('../../app/controllers/shared/module/RandomisationTirthaYatraController')
+
 
 
 router.post('/add', 
@@ -76,6 +80,25 @@ router.post('/delete',
             .trim()
             .notEmpty().withMessage('ApplicationId ID is required')
         ], 
-        expressValidatorMiddleware.catchErrors, generateRegistrationNumber)      
+        expressValidatorMiddleware.catchErrors, generateRegistrationNumber)    
+        
+        
+    router.get('/GetApplcntVerifyList', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        [
+            check('SchemeID')
+            .trim()
+            .notEmpty().withMessage('Scheme ID is required'),
+
+            check('TripGroupID')
+            .trim()
+            .notEmpty().withMessage('TripGroup ID is required'),
+
+            check('DistID')
+            .trim()
+            .notEmpty().withMessage('Dist ID is required')
+        ], 
+        expressValidatorMiddleware.catchErrors, applicantVerificationDetails)       
 
 module.exports = router

@@ -69,7 +69,6 @@ function updateData(ApplicationId, PersonalDetailsData){
     })
 }
 
-
 function deletePersnlDt(ApplicationId){
     return new Promise((resolve, reject)=>{
         PersonalDetails.deleteOne({id:ApplicationId})
@@ -92,6 +91,19 @@ function insertPersonalDetails(PersonalDetailsData){
             reject (error);
         })
     });
+}
+
+function getDataBasedOnApplicationIds(ids){
+    return new Promise((resolve, reject)=>{
+        PersonalDetails.find().where('id').in(ids)
+        .then(getData =>{
+            resolve (getData);
+        })
+        .then(error =>{
+            reject (error)
+        })
+    })
+    
 }
 
 
@@ -172,5 +184,6 @@ module.exports = {
     updateData,
     getAllPersnlDt,
     deletePersnlDt,
-    getAllReg
+    getAllReg,
+    getDataBasedOnApplicationIds
 };
