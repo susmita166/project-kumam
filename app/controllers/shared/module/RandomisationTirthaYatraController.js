@@ -2,6 +2,7 @@ const PersonalDetailsModel = require("../../../mongoDbmodels/PersonalDetails");
 const SpouseDetailsModel = require("../../../mongoDbmodels/SpouseDetails");
 const AttendantDetailsModel = require("../../../mongoDbmodels/AttendantDetails");
 const DistrictMasterModel = require("../../../mongoDbmodels/DistrictMaster");
+const RandomisationDetailsModel = require("../../../mongoDbmodels/RandomisationDetails");
 const ApplicntVerificationDetailsModel = require("../../../mongoDbmodels/ApplicntVerificationDetails");
 const getfileuploadPath = require("../../../../config/fileUploadPath");
 const getExpressValidator = require("../../../../middlewares/expressValidator");
@@ -57,14 +58,44 @@ const applicantVerificationDetails = async (req, res) => {
 }
 
 
+const getRandomisationDetails = async (req, res) => {
+    try {
+        console.log("hello");
+        let requestData = req.body;
+        let limit = requestData.limit;
+        let skip = (requestData.page - 1) * requestData.limit;
+        let filterData = {};
 
+        if(requestData.SchemeID) filterData.SchemeID = parseInt(requestData.SchemeID);
+        if(requestData.TripGroupID) filterData.TripGroupID = parseInt(requestData.TripGroupID);
+        if(requestData.ApplicationID) filterData.ApplicationID = parseInt(requestData.ApplicationID);
+        if(requestData.ApplcntID) filterData.ApplcntID = parseInt(requestData.ApplcntID);
+        if(requestData.TripID) filterData.TripID = parseInt(requestData.TripID);
+        if(requestData.DistID) filterData.DistID = parseInt(requestData.DistID);
+        if(requestData.ApplcntType) filterData.ApplcntType = requestData.ApplcntType;
+        if(requestData.Status) filterData.Status = requestData.Status;
+        console.log(filterData);
 
-
-
-
+        const getRandomisationData = await RandomisationDetailsModel.getErandomisation(filterData, limit, skip);
+        res.status(200).json({ 
+            Status:'true', 
+            Count: getRandomisationData.length,
+            Data: getRandomisationData, 
+            Message: 'Randomisation Listing' 
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            Status: "False",
+            Message: "Error",
+            Error: error.toString()
+        });
+    }
+};
 
 
 
 module.exports={
-    applicantVerificationDetails
+    applicantVerificationDetails,
+    getRandomisationDetails
 }

@@ -15,7 +15,8 @@ const {
 } = require('../../app/controllers/shared/module/TirthaYatraController')
 
 const {
-	applicantVerificationDetails
+	applicantVerificationDetails,
+    getRandomisationDetails
 } = require('../../app/controllers/shared/module/RandomisationTirthaYatraController')
 
 
@@ -99,6 +100,19 @@ router.post('/delete',
             .trim()
             .notEmpty().withMessage('Dist ID is required')
         ], 
-        expressValidatorMiddleware.catchErrors, applicantVerificationDetails)       
+        expressValidatorMiddleware.catchErrors, applicantVerificationDetails)      
+        
+        
+    router.get('/GetERandAllctnSummary', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        [
+            check('SchemeID')
+            .trim(),
+
+            check('TripGroupID')
+            .trim()
+        ], 
+        expressValidatorMiddleware.catchErrors, getRandomisationDetails)    
 
 module.exports = router
