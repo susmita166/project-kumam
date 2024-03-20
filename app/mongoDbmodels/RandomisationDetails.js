@@ -14,6 +14,16 @@ async function getErandomisation(filterData, limit, skip) {
     }
 }
 
+async function deleteBasedOnSpacifiicData(SpecificId) {
+    try {
+        const getData = await tblERandAllcnSummary.deleteMany(SpecificId);
+        console.log(getData);
+        return getData;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 const RandomisationDetailsSchema = new mongoDbConnection.Schema({
     id:{
@@ -100,5 +110,6 @@ const isAssociated = mongoose.connection.modelNames().includes('tblERandAllcnSum
 
 
 module.exports = {
-    getErandomisation
+    getErandomisation,
+    deleteBasedOnSpacifiicData
 };

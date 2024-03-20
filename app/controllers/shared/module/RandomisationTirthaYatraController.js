@@ -94,8 +94,34 @@ const getRandomisationDetails = async (req, res) => {
 };
 
 
+const deleteRandomBasedOnSpacificId = async(req, res) =>{
+    try{
+    let requestData = req.body;
+    if(Object.keys(requestData).length > 1){
+        throw new Error('You can select only one value at a time');
+    }
+    const cleanedData = Object.assign({}, requestData);
+    // console.log(cleanedData);
+    const deleteResult = await RandomisationDetailsModel.deleteBasedOnSpacifiicData(cleanedData);
+    if(deleteResult.acknowledged == true){
+        res.status(500).json({
+            Status: "True",
+            Message: "Data deleted sucessfully",
+        });
+    }
+    } catch (error) {
+        res.status(500).json({
+            Status: "False",
+            Message: "Error",
+            Error: error.message
+        });
+    }
+}
+
+
 
 module.exports={
     applicantVerificationDetails,
-    getRandomisationDetails
+    getRandomisationDetails,
+    deleteRandomBasedOnSpacificId
 }
