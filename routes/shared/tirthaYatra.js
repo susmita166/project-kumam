@@ -17,9 +17,17 @@ const {
 const {
 	applicantVerificationDetails,
     getRandomisationDetails,
-    deleteRandomBasedOnSpacificId
+    deleteRandomBasedOnSpacificId,
+    simpleRandomisation
 } = require('../../app/controllers/shared/module/RandomisationTirthaYatraController')
 
+
+const {
+	listPersnlDetails,
+    listSposeDetails,
+    listAttendantDetails,
+    listDetailsTirthaYatra
+} = require('../../app/controllers/shared/module/PracticeController')
 
 
     router.post('/add', 
@@ -105,21 +113,21 @@ const {
         
     
     router.post('/delete',
-    getFileUploadMiddlewear.none(),
-    superadminMiddleware.isAuthenticated, 
-    [
-        check('ApplicationId')
-            .trim()
-            .notEmpty().withMessage('ApplicationId ID is required')
-    ], 
-    expressValidatorMiddleware.catchErrors, deleteDetails)        
+        getFileUploadMiddlewear.none(),
+        superadminMiddleware.isAuthenticated, 
+        [
+            check('ApplicationId')
+                .trim()
+                .notEmpty().withMessage('ApplicationId ID is required')
+        ], 
+        expressValidatorMiddleware.catchErrors, deleteDetails)        
 
 
 
     router.post('/deleteRandomisationDataBasedOnSpacificId',
-    getFileUploadMiddlewear.none(),
-    superadminMiddleware.isAuthenticated, 
-    expressValidatorMiddleware.catchErrors, deleteRandomBasedOnSpacificId) 
+        getFileUploadMiddlewear.none(),
+        superadminMiddleware.isAuthenticated, 
+        expressValidatorMiddleware.catchErrors, deleteRandomBasedOnSpacificId) 
         
         
     router.get('/GetERandAllctnSummary', 
@@ -133,5 +141,33 @@ const {
             .trim()
         ], 
         expressValidatorMiddleware.catchErrors, getRandomisationDetails)    
+
+
+    router.get('/RandomisationProcess', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        expressValidatorMiddleware.catchErrors, simpleRandomisation)      
+
+    router.get('/listPersnlDetails', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        expressValidatorMiddleware.catchErrors, listPersnlDetails)   
+        
+    router.get('/listSposeDetails', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        expressValidatorMiddleware.catchErrors, listSposeDetails)   
+        
+        
+    router.get('/listAttendantDetails', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        expressValidatorMiddleware.catchErrors, listAttendantDetails)       
+        
+
+    router.get('/listDetailsTirthaYatra', 
+        superadminMiddleware.isAuthenticated,
+        getFileUploadMiddlewear.none(),
+        expressValidatorMiddleware.catchErrors, listDetailsTirthaYatra)         
 
 module.exports = router

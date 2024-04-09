@@ -119,9 +119,45 @@ const deleteRandomBasedOnSpacificId = async(req, res) =>{
 }
 
 
+const simpleRandomisation = async(req, res) =>{
+    try{
+        let requestData = req.body;
+        let filterData = {};
+        if(requestData.DistID) filterData.DistID = parseInt(requestData.DistID);
+        
+        const getRandomisationData = await RandomisationDetailsModel.getErandomisationWithoutSkipAndLimit(filterData);
+        let applicantDetails = await ApplicntVerificationDetailsModel.getVerificationDetailsBasedOnSpecificCondition(filterData);
+        let getApplicantDetailsName = applicantDetails.map(data => {
+            let newItem = { ...data };
+            let registration = newItem.RegistrationNo.replace(/-/g, "").toLowerCase()+newItem.Applicant_Name.replace(/\s/g, "").toLowerCase();
+            return registration;
+        });
+
+        let getRandomisationName = getRandomisationData.map(data => {
+            let newItem = { ...data };
+            let registration = newItem.RegistrationNo.replace(/-/g, "").toLowerCase()+newItem.Applicant_Name.replace(/\s/g, "").toLowerCase();
+            return registration;
+        });
+        
+        const diffArray = getApplicantDetailsName.filter(item => !getRandomisationName.includes(item));
+        console.log(getApplicantDetailsName.length);
+        console.log(getApplicantDetailsName.length);
+        console.log(diffArray.length);
+
+    }catch (error) {
+        res.status(500).json({
+            Status: "False",
+            Message: "Error",
+            Error: error.message
+        });
+    }
+}
+
+
 
 module.exports={
     applicantVerificationDetails,
     getRandomisationDetails,
-    deleteRandomBasedOnSpacificId
+    deleteRandomBasedOnSpacificId,
+    simpleRandomisation
 }

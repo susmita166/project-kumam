@@ -14,6 +14,57 @@ async function getErandomisation(filterData, limit, skip) {
     }
 }
 
+async function getErandomisationWithoutSkipAndLimit(SpecificId) {
+    try {
+        // const getData = await tblERandAllcnSummary.find(filterData);
+        // // console.log(getData);
+        // return getData;
+        const pipeline = [
+            {
+                $match: SpecificId
+            },
+            {
+                $lookup: {
+                    from: "allVerifedApplicantDetails",
+                    localField: "ApplicationID",
+                    foreignField: "ApplicationId",
+                    as: "allVerifedApplicantDetails"
+                }
+            },
+            {
+                $unwind: "$allVerifedApplicantDetails"
+            },
+            {
+                $project: {
+                    id: "$id",
+                    ApplcntID: "$ApplcntID",
+                    RegistrationNo: "$allVerifedApplicantDetails.RegistrationNo",
+                    Applicant_Name: "$allVerifedApplicantDetails.Applicant_Name",
+                    ApplcntType: "$ApplcntType",
+                    ApplicationID: "$ApplicationID",
+                    TripGroupID: "$TripGroupID",
+                    DistID: "$DistID"
+                }
+            }
+        ];
+        const result = await tblERandAllcnSummary.aggregate(pipeline);
+        return result;
+
+
+
+
+
+
+
+
+
+
+
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function deleteBasedOnSpacifiicData(SpecificId) {
     try {
         const getData = await tblERandAllcnSummary.deleteMany(SpecificId);
@@ -23,6 +74,11 @@ async function deleteBasedOnSpacifiicData(SpecificId) {
         throw error;
     }
 }
+
+
+// async function simpleRandomisation(){
+    
+// }
 
 
 const RandomisationDetailsSchema = new mongoDbConnection.Schema({
@@ -111,5 +167,6 @@ const isAssociated = mongoose.connection.modelNames().includes('tblERandAllcnSum
 
 module.exports = {
     getErandomisation,
-    deleteBasedOnSpacifiicData
+    deleteBasedOnSpacifiicData,
+    getErandomisationWithoutSkipAndLimit
 };
